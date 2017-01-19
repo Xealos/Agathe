@@ -5,7 +5,8 @@ public class BlockMovement : MonoBehaviour {
 
     public Vector2 PlayerInput;
     public Vector2 curPos;
-    public float speed;
+    public float CooldownTime; 
+
 
     public enum Direction
     {
@@ -14,11 +15,13 @@ public class BlockMovement : MonoBehaviour {
         DOWN
     };
 
-    private SpriteRenderer rend; 
+    private SpriteRenderer rend;
+    private float lastTimePressed; 
 
 	// Use this for initialization
 	void Start () {
-        rend = GetComponent<SpriteRenderer>(); 
+        rend = GetComponent<SpriteRenderer>();
+        lastTimePressed = -100.0f; 
     }
 	
 	// Update is called once per frame
@@ -26,18 +29,27 @@ public class BlockMovement : MonoBehaviour {
         // Getting left/right input from player
         PlayerInput.x = Input.GetAxis("Horizontal");
 
-        // Normalize the input so value is -1 or 1
-        PlayerInput = new Vector2(PlayerInput.x, PlayerInput.y).normalized;
-        // Get block's current position
-        curPos = transform.position;
-        // Change position based on input and speed.
-        //curPos += PlayerInput * speed * Time.deltaTime;
+        PlayerInput = new Vector2(PlayerInput.x, PlayerInput.y).normalized; 
 
-        //Pass the block's direction to the grid so that it can track it 
+        if( PlayerInput.x != 0 
+            && Time.time > lastTimePressed + CooldownTime )
+        {
+            // Normalize the input so value is -1 or 1
+            PlayerInput = new Vector2(PlayerInput.x, PlayerInput.y).normalized;
+            // Get block's current position
+            curPos = transform.position;
 
+            //TODO: Pass the block's direction to the grid so that it can track it
 
-        curPos.x += PlayerInput.x * rend.sprite.rect.size.x; 
-        //Update the position of the block by moving it the size of the block 
-        transform.position = curPos;
+            //Increment position based on the horizontal direction 
+            curPos.x += PlayerInput.x;
+
+            Debug.Log("Current position is being updated");
+
+            //Update the position of the block by moving it the size of the block 
+            transform.position = curPos;
+
+            lastTimePressed = Time.time; 
+        }
 	}
 }
