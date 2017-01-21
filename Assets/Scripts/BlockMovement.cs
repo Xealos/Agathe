@@ -7,7 +7,8 @@ public class BlockMovement : MonoBehaviour {
     public Vector2 curPos;
     public float CooldownTime_x;
     public float CooldownTime_y;
-    public float MoveTime; 
+    public float MoveTime;
+    public GridBehavior gridBehavior; 
 
     public enum Direction
     {
@@ -27,10 +28,13 @@ public class BlockMovement : MonoBehaviour {
         lastTimePressed_x = -100.0f;
         lastTimePressed_y = -100.0f;
         lastMove = 0.0f;
+        gridBehavior = new GridBehavior();
+        gridBehavior.SetPosition(0, 0);
     }
 	
 	// Update is called once per frame
 	void Update () {
+        bool validMove;
         // Getting left/right input from player
         PlayerInput.x = Input.GetAxis("Horizontal");
         PlayerInput.y = Input.GetAxis("Vertical");
@@ -43,17 +47,28 @@ public class BlockMovement : MonoBehaviour {
             // Get block's current position
             curPos = transform.position;
 
-            //TODO: Pass the block's direction to the grid so that it can track it
+            //Pass the block's direction to the grid so that it can track it
 
-            //Increment position based on the horizontal direction 
-            curPos.x += PlayerInput.x;
+            if (PlayerInput.x == 1) {
+                validMove = gridBehavior.UpdatePosition(Direction.RIGHT);
+            }
+            else
+            {
+                validMove = gridBehavior.UpdatePosition(Direction.LEFT);
+            }
 
-            Debug.Log("Current position is being updated");
+            if (validMove)
+            {
+                //Increment position based on the horizontal direction 
+                curPos.x += PlayerInput.x;
 
-            //Update the position of the block by moving it the size of the block 
-            transform.position = curPos;
+                Debug.Log("Current position is being updated");
 
-            lastTimePressed_x = Time.time; 
+                //Update the position of the block by moving it the size of the block 
+                transform.position = curPos;
+
+                lastTimePressed_x = Time.time;
+            }
         }
 
         if( PlayerInput.y == -1 
@@ -62,17 +77,21 @@ public class BlockMovement : MonoBehaviour {
             // Get block's current position
             curPos = transform.position;
 
-            //TODO: Pass the block's direction to the grid so that it can track it
+            //Pass the block's direction to the grid so that it can track it
+            validMove = gridBehavior.UpdatePosition(Direction.DOWN);
 
-            //Increment position based on the vertical direction 
-            curPos.y += PlayerInput.y;
+            if (validMove)
+            {
+                //Increment position based on the vertical direction 
+                curPos.y += PlayerInput.y;
 
-            Debug.Log("Current position is being updated");
+                Debug.Log("Current position is being updated");
 
-            //Update the position of the block by moving it the size of the block 
-            transform.position = curPos;
+                //Update the position of the block by moving it the size of the block 
+                transform.position = curPos;
 
-            lastTimePressed_y = Time.time;
+                lastTimePressed_y = Time.time;
+            }
         }
         else if( PlayerInput.y == 0 && Time.time > lastMove + MoveTime)
         {
@@ -80,16 +99,20 @@ public class BlockMovement : MonoBehaviour {
             curPos = transform.position;
 
             //TODO: Pass the block's direction to the grid so that it can track it
+            validMove = gridBehavior.UpdatePosition(Direction.DOWN);
 
-            //Decrement position based on the vertical direction 
-            curPos.y -= 1;
+            if (validMove)
+            {
+                //Decrement position based on the vertical direction 
+                curPos.y -= 1;
 
-            Debug.Log("Current position is being updated");
+                Debug.Log("Current position is being updated");
 
-            //Update the position of the block by moving it the size of the block 
-            transform.position = curPos;
+                //Update the position of the block by moving it the size of the block 
+                transform.position = curPos;
 
-            lastMove = Time.time;
+                lastMove = Time.time;
+            }
         }
 	}
 }
