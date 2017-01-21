@@ -8,7 +8,6 @@ public class BlockMovement : MonoBehaviour {
     public float CooldownTime_x;
     public float CooldownTime_y;
     public float MoveTime;
-    public GridBehavior gridBehavior; 
 
     public enum Direction
     {
@@ -17,6 +16,7 @@ public class BlockMovement : MonoBehaviour {
         DOWN
     };
 
+    private GridBehavior gridBehavior;
     private SpriteRenderer rend;
     private float lastTimePressed_x;
     private float lastTimePressed_y;
@@ -28,8 +28,8 @@ public class BlockMovement : MonoBehaviour {
         lastTimePressed_x = -100.0f;
         lastTimePressed_y = -100.0f;
         lastMove = 0.0f;
-        gridBehavior = new GridBehavior();
-        gridBehavior.SetPosition(0, 0);
+        gridBehavior = transform.parent.gameObject.GetComponent<GridBehavior>();
+        gridBehavior.SetPosition(4, 0);
     }
 	
 	// Update is called once per frame

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GridBehavior : MonoBehaviour {
 
-    public GameObject Block; 
+    public GameObject ControlBlock; 
 
     private SpriteRenderer rend; 
     private Vector2 cellSize;
@@ -17,16 +17,19 @@ public class GridBehavior : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        rend = Block.GetComponent<SpriteRenderer>();
+        //rend = Block.GetComponent<SpriteRenderer>();
         
         //Based on the size of the block object, build a tetris grid 
         //Get the size of our cells
-        cellSize = rend.sprite.rect.size;
+        //cellSize = rend.sprite.rect.size;
 
         gridHeight = 22;
         gridWidth = 10;
 
         Grid = new bool[gridWidth,gridHeight];
+
+        GameObject childBlock = (GameObject)Instantiate(ControlBlock);
+        childBlock.transform.parent = transform; 
     }
 	
 	// Update is called once per frame
@@ -83,9 +86,11 @@ public class GridBehavior : MonoBehaviour {
         {
             Grid[(int)blockPosition.x, (int)blockPosition.y] = false;
             Grid[(int)newBlockPos.x, (int)newBlockPos.y] = true;
+
+            //Update to the new position 
+            blockPosition = newBlockPos;
         }
 
-        //Return boolean
         return retVal;
     }
 }
