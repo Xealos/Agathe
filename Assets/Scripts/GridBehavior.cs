@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GridBehavior : MonoBehaviour {
 
-    public GameObject ControlBlock; 
+    public GameObject Shape; 
 
     private SpriteRenderer rend; 
     private Vector2 cellSize;
@@ -13,6 +13,8 @@ public class GridBehavior : MonoBehaviour {
     private int gridHeight;
     private int gridWidth;
     private Vector2 blockPosition;
+    private Transform shapeTransform;
+    private List<GameObject> blocks = new List<GameObject>();
 
     // Use this for initialization
     void Start ()
@@ -28,8 +30,17 @@ public class GridBehavior : MonoBehaviour {
 
         Grid = new bool[gridWidth,gridHeight];
 
-        GameObject childBlock = (GameObject)Instantiate(ControlBlock);
-        childBlock.transform.parent = transform; 
+        GameObject childBlock = (GameObject)Instantiate(Shape);
+        childBlock.transform.parent = transform;
+
+        //Getting the transform of the shape
+        shapeTransform = transform.GetChild(0).GetComponent<Transform>();
+
+        //Getting the blocks of the shape
+        blocks.Add(shapeTransform.GetChild(0).gameObject);
+        blocks.Add(shapeTransform.GetChild(1).gameObject);
+        blocks.Add(shapeTransform.GetChild(2).gameObject);
+        blocks.Add(shapeTransform.GetChild(3).gameObject);
     }
 	
 	// Update is called once per frame
@@ -41,6 +52,7 @@ public class GridBehavior : MonoBehaviour {
     //Sets the starting position of the block
     public void SetPosition(int x, int y)
     {
+        
         Grid[x, y] = true;
         blockPosition.x = x;
         blockPosition.y = y;
@@ -49,30 +61,34 @@ public class GridBehavior : MonoBehaviour {
     public bool UpdatePosition(BlockMovement.Direction direction)
     {
         //Check for valid boundary
-        bool retVal = false;
+        bool retVal = true;
         Vector2 newBlockPos = blockPosition;
         switch (direction)
         {
+            
             case BlockMovement.Direction.LEFT:
-                if(blockPosition.x >= 1)
+                foreach (GameObject block in blocks)
                 {
-                    retVal = true;
-                    newBlockPos.x--;
+                    if (blockPosition.x < 1)
+                    {
+                        retVal = false;
+                        newBlockPos.x--;
+                    }
                 }
                 break;
 
             case BlockMovement.Direction.RIGHT:
-                if (blockPosition.x < 9)
+                if (blockPosition.x >= 9)
                 {
-                    retVal = true;
+                    retVal = false;
                     newBlockPos.x++;
                 }
                 break;
 
             case BlockMovement.Direction.DOWN:
-                if (blockPosition.y < 21)
+                if (blockPosition.y >= 21)
                 {
-                    retVal = true;
+                    retVal = false;
                     newBlockPos.y++;
                 }
                 break;

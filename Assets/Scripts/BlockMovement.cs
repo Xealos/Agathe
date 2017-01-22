@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BlockMovement : MonoBehaviour {
 
@@ -21,15 +22,21 @@ public class BlockMovement : MonoBehaviour {
     private float lastTimePressed_x;
     private float lastTimePressed_y;
     private float lastMove;
+    private List<GameObject> blocks = new List<GameObject>();
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         rend = GetComponent<SpriteRenderer>();
         lastTimePressed_x = -100.0f;
         lastTimePressed_y = -100.0f;
         lastMove = 0.0f;
         gridBehavior = transform.parent.gameObject.GetComponent<GridBehavior>();
         gridBehavior.SetPosition(4, 0);
+
+        blocks.Add(transform.GetChild(0).gameObject);
+        blocks.Add(transform.GetChild(1).gameObject);
+        blocks.Add(transform.GetChild(2).gameObject);
+        blocks.Add(transform.GetChild(3).gameObject);
     }
 	
 	// Update is called once per frame
@@ -44,9 +51,7 @@ public class BlockMovement : MonoBehaviour {
         if( PlayerInput.x != 0 
             && Time.time > lastTimePressed_x + CooldownTime_x )
         {
-            // Get block's current position
-            curPos = transform.position;
-
+            
             //Pass the block's direction to the grid so that it can track it
 
             if (PlayerInput.x == 1) {
@@ -59,7 +64,10 @@ public class BlockMovement : MonoBehaviour {
 
             if (validMove)
             {
-                //Increment position based on the horizontal direction 
+                // Get block's current position
+                curPos = transform.position;
+
+                //Increment position based on the horizontal direction
                 curPos.x += PlayerInput.x;
 
                 Debug.Log("Current position is being updated");
@@ -74,14 +82,15 @@ public class BlockMovement : MonoBehaviour {
         if( PlayerInput.y == -1 
             && Time.time > lastTimePressed_y + CooldownTime_y )
         {
-            // Get block's current position
-            curPos = transform.position;
-
+            
             //Pass the block's direction to the grid so that it can track it
             validMove = gridBehavior.UpdatePosition(Direction.DOWN);
 
             if (validMove)
             {
+                // Get block's current position
+                curPos = transform.position;
+
                 //Increment position based on the vertical direction 
                 curPos.y += PlayerInput.y;
 
@@ -95,14 +104,15 @@ public class BlockMovement : MonoBehaviour {
         }
         else if( PlayerInput.y == 0 && Time.time > lastMove + MoveTime)
         {
-            // Get block's current position
-            curPos = transform.position;
 
             //TODO: Pass the block's direction to the grid so that it can track it
             validMove = gridBehavior.UpdatePosition(Direction.DOWN);
 
             if (validMove)
             {
+                // Get block's current position
+                curPos = transform.position;
+
                 //Decrement position based on the vertical direction 
                 curPos.y -= 1;
 
