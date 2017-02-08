@@ -25,22 +25,12 @@ public class GridBehavior : MonoBehaviour {
         //Get the size of our cells
         //cellSize = rend.sprite.rect.size;
 
-        gridHeight = 22;
-        gridWidth = 10;
+        //gridHeight = 22;
+        //gridWidth = 10;
 
-        Grid = new bool[gridWidth,gridHeight];
+        ////Make our grid 
+        //Grid = new bool[gridWidth,gridHeight];
 
-        GameObject childBlock = (GameObject)Instantiate(Shape);
-        childBlock.transform.parent = transform;
-
-        //Getting the transform of the shape
-        shapeTransform = transform.GetChild(0).GetComponent<Transform>();
-
-        //Getting the blocks of the shape
-        blocks.Add(shapeTransform.GetChild(0).gameObject);
-        blocks.Add(shapeTransform.GetChild(1).gameObject);
-        blocks.Add(shapeTransform.GetChild(2).gameObject);
-        blocks.Add(shapeTransform.GetChild(3).gameObject);
     }
 	
 	// Update is called once per frame
@@ -52,61 +42,96 @@ public class GridBehavior : MonoBehaviour {
     //Sets the starting position of the block
     public void SetPosition(int x, int y)
     {
-        
+
         Grid[x, y] = true;
         blockPosition.x = x;
         blockPosition.y = y;
     }
 
-    public bool UpdatePosition(BlockMovement.Direction direction)
+    //Clear position funciton 
+    public void ClearPosition( int x, int y )
     {
-        //Check for valid boundary
-        bool retVal = true;
-        Vector2 newBlockPos = blockPosition;
-        switch (direction)
-        {
-            
-            case BlockMovement.Direction.LEFT:
-                foreach (GameObject block in blocks)
-                {
-                    if (blockPosition.x < 1)
-                    {
-                        retVal = false;
-                        newBlockPos.x--;
-                    }
-                }
-                break;
 
-            case BlockMovement.Direction.RIGHT:
-                if (blockPosition.x >= 9)
-                {
-                    retVal = false;
-                    newBlockPos.x++;
-                }
-                break;
-
-            case BlockMovement.Direction.DOWN:
-                if (blockPosition.y >= 21)
-                {
-                    retVal = false;
-                    newBlockPos.y++;
-                }
-                break;
-
-            default:
-                break;
-        }
-
-        //Update Position in array based on direction
-        if(retVal)
-        {
-            Grid[(int)blockPosition.x, (int)blockPosition.y] = false;
-            Grid[(int)newBlockPos.x, (int)newBlockPos.y] = true;
-
-            //Update to the new position 
-            blockPosition = newBlockPos;
-        }
-
-        return retVal;
     }
+
+    //Boundary check
+    public bool isMoveLegal( int x, int y, ShapeBehavior.Direction direction )
+    {
+        //Calculate requested cell position 
+
+        //Verify requested cell position is within boundaries of game 
+
+        //Verify requested cell position is not colliding with blocks 
+
+        return true; 
+    }
+
+    public bool rowCheck( int row )
+    {
+        //loop through given row and determine if all cells are occupied 
+
+        return true; 
+    }
+
+    public void rowClear( int row )
+    {
+        //clear the given row 
+    }
+
+    public void shiftDown( int row )
+    {
+        //shift all cells that are above the given row down 1 vertically 
+    }
+
+    //public bool UpdatePosition(BlockMovement.Direction direction)
+    //{
+    //    //Check for valid boundary
+    //    bool retVal = true;
+    //    Vector2 newBlockPos = blockPosition;
+    //    switch (direction)
+    //    {
+
+    //        case BlockMovement.Direction.LEFT:
+    //            foreach (GameObject block in blocks)
+    //            {
+    //                if (blockPosition.x < 1)
+    //                {
+    //                    retVal = false;
+    //                    newBlockPos.x--;
+    //                }
+    //            }
+    //            break;
+
+    //        case BlockMovement.Direction.RIGHT:
+    //            if (blockPosition.x >= 9)
+    //            {
+    //                retVal = false;
+    //                newBlockPos.x++;
+    //            }
+    //            break;
+
+    //        case BlockMovement.Direction.DOWN:
+    //            if (blockPosition.y >= 21)
+    //            {
+    //                retVal = false;
+    //                newBlockPos.y++;
+    //            }
+    //            break;
+
+    //        default:
+    //            break;
+    //    }
+
+    //    //Update Position in array based on direction
+    //    if(retVal)
+    //    {
+    //        Grid[(int)blockPosition.x, (int)blockPosition.y] = false;
+    //        Grid[(int)newBlockPos.x, (int)newBlockPos.y] = true;
+
+    //        //Update to the new position 
+    //        blockPosition = newBlockPos;
+    //    }
+
+    //    return retVal;
+    //}
 }
