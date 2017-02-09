@@ -20,7 +20,7 @@ public class GridBehavior : MonoBehaviour {
     void Start ()
     {
         //rend = Block.GetComponent<SpriteRenderer>();
-        
+
         //Based on the size of the block object, build a tetris grid 
         //Get the size of our cells
         //cellSize = rend.sprite.rect.size;
@@ -29,7 +29,7 @@ public class GridBehavior : MonoBehaviour {
         //gridWidth = 10;
 
         ////Make our grid 
-        //Grid = new bool[gridWidth,gridHeight];
+        //Grid = new bool[gridWidth, gridHeight];
 
     }
 	
