@@ -12,11 +12,18 @@ public class ShapeProperties
 
 public class ShapeBehavior : MonoBehaviour
 {
+    //TODO: Consider moving all the timeout/move time funcationality to the 
+    //game controller 
+    public float CooldownTimeX;
+    public float CooldownTimeY;
+    public float MoveTime;
+
     private GameObject grid;
     private GridBehavior gridBehavior;
     private ShapeProperties shapeProp;
-    private float lastTimePressed_x;
-    private float lastTimePressed_y;
+    private float lastTimePressedX;
+    private float lastTimePressedY;
+    private float lastMove;
 
     public enum Direction
     {
@@ -26,12 +33,9 @@ public class ShapeBehavior : MonoBehaviour
         NONE
     };
 
-    //private variables to hold shape type, rotation, and position? 
-
     // Use this for initialization
     void Start ()
     {
-
         grid = GameObject.FindWithTag("grid");
 
         //Get the grid components 
@@ -51,14 +55,12 @@ public class ShapeBehavior : MonoBehaviour
         //initialize the position 
         shapeProp.x_pos = 5;
         shapeProp.y_pos = 0; 
-
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
+	void Update ()
+    {
         Vector2 playerInput;
-        Vector2 curPos; 
         bool rotate;
         Direction shapeDir = Direction.NONE;
 
@@ -72,33 +74,53 @@ public class ShapeBehavior : MonoBehaviour
         rotate = Input.GetKeyDown(KeyCode.R);
 
         //Assign a direction based on the input
-        if(playerInput.x == 1)
+        if (playerInput.x == 1)
         {
             shapeDir = Direction.RIGHT; 
         }
-        else if(playerInput.x == -1)
+        else if (playerInput.x == -1)
         {
             shapeDir = Direction.LEFT; 
         }
-        else if(playerInput.y == -1)
+        else if (playerInput.y == -1)
         {
             shapeDir = Direction.DOWN; 
         }
 
-        //If a collision occurs during any of the above input processing, call the destroy shape function 
-        if( gridBehavior.isMoveLegal( shapeProp.x_pos, shapeProp.y_pos, shapeDir ) )
+        //BRP TODO: See if this logic can be simplified between the player input 
+        //and requested direction 
+        if( gridBehavior.IsMoveLegal( shapeProp.x_pos, shapeProp.y_pos, shapeDir ) )
         {
-            // Get block's current position
-            curPos = transform.position;
+            if (playerInput.x != 0
+                && Time.time > ( lastTimePressedX + CooldownTimeX ))
+            {
+                updatePosition( shapeDir );
+                lastTimePressedX = Time.time;
+            }
 
-            //Increment position
-            curPos.x += playerInput.x;
-            curPos.y += playerInput.y;
+            if (playerInput.y == -1
+                && Time.time > ( lastTimePressedY + CooldownTimeY ))
+            {
+                updatePosition( shapeDir );
+                lastTimePressedY = Time.time; 
+            }
 
-            //Update the position of the block by moving it the size of the block 
-            transform.position = curPos;
+            //BRP TODO: This else if needs to be moved outside the parent if function 
+            //because we need to check for a valid DOWN move before trying to 
+            //execute this 
+            else if (playerInput.y == 0 && Time.time > ( lastMove + MoveTime ))
+            {
+                updatePosition( Direction.DOWN );
+                lastMove = Time.time;
+            }
         }
-        //On timeout, move the shape down 1 row BY FORCE 
+    }
+
+    private void destroyShape()
+    {
+        //instantiate 4 blocks in the correct positions on grid 
+
+        //destroy the shape object 
     }
 
     private void setRotation()
@@ -110,18 +132,35 @@ public class ShapeBehavior : MonoBehaviour
         //Return FALSE if a collision occurs 
     }
 
-    private void setPosition()
+    private void updatePosition( Direction direction )
     {
-        //Ask the grid if this move is within boundaries and doesn't collide with blocks  
+        Vector2 curPos; 
 
-        //Sets the shape's position 
+        // Get block's current position
+        curPos = transform.position;
+
+        //Clear the current position on the grid 
+        gridBehavior.CellClear( (int)curPos.x, (int)curPos.y );
+
+        //Increment position based on the direction
+        if (direction == Direction.RIGHT)
+        {
+            curPos.x += 1;
+        }
+        else if (direction == Direction.LEFT )
+        {
+            curPos.x -= 1; 
+        }
+        else
+        {
+            curPos.y -= 1; 
+        }
+
+        //Update the position of the block by moving it the size of the block 
+        transform.position = curPos;
+
+        //Let the grid know of the new position
+        gridBehavior.CellSet( (int)curPos.x, (int)curPos.y );
     }
-
-    private void destroyShape()
-    {
-        //instantiate 4 blocks in the correct positions on grid 
-
-        //destroy the shape object 
-    } 
 
 }
