@@ -32,12 +32,6 @@ public class GridBehavior : MonoBehaviour {
         //Grid = new bool[gridWidth, gridHeight];
 
     }
-	
-	// Update is called once per frame
-	void Update ()
-    {
-
-	}
 
     //Sets the starting position of the block
     public void SetPosition(int x, int y)
