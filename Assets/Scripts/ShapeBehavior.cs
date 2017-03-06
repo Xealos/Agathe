@@ -17,6 +17,7 @@ public class ShapeBehavior : MonoBehaviour
     public float CooldownTimeX;
     public float CooldownTimeY;
     public float MoveTime;
+    public Vector2 StartPos; 
 
     private GameObject grid;
     private GridBehavior gridBehavior;
@@ -53,8 +54,9 @@ public class ShapeBehavior : MonoBehaviour
         shapeProp.rotation = 0;
 
         //initialize the position 
-        shapeProp.x_pos = 5;
-        shapeProp.y_pos = 0; 
+        shapeProp.x_pos = (int)StartPos.x;
+        shapeProp.y_pos = (int)StartPos.y; 
+        transform.position = StartPos; 
 	}
 	
 	// Update is called once per frame
@@ -89,30 +91,28 @@ public class ShapeBehavior : MonoBehaviour
 
         //BRP TODO: See if this logic can be simplified between the player input 
         //and requested direction 
-        if( gridBehavior.IsMoveLegal( shapeProp.x_pos, shapeProp.y_pos, shapeDir ) )
+        if (gridBehavior.IsMoveLegal(shapeProp.x_pos, shapeProp.y_pos, shapeDir))
         {
             if (playerInput.x != 0
-                && Time.time > ( lastTimePressedX + CooldownTimeX ))
+                && Time.time > (lastTimePressedX + CooldownTimeX))
             {
-                updatePosition( shapeDir );
+                updatePosition(shapeDir);
                 lastTimePressedX = Time.time;
             }
 
             if (playerInput.y == -1
-                && Time.time > ( lastTimePressedY + CooldownTimeY ))
+                && Time.time > (lastTimePressedY + CooldownTimeY))
             {
-                updatePosition( shapeDir );
-                lastTimePressedY = Time.time; 
+                updatePosition(shapeDir);
+                lastTimePressedY = Time.time;
             }
+        }
 
-            //BRP TODO: This else if needs to be moved outside the parent if function 
-            //because we need to check for a valid DOWN move before trying to 
-            //execute this 
-            else if (playerInput.y == 0 && Time.time > ( lastMove + MoveTime ))
-            {
-                updatePosition( Direction.DOWN );
-                lastMove = Time.time;
-            }
+        if (playerInput.y == 0 && Time.time > (lastMove + MoveTime)
+            && gridBehavior.IsMoveLegal(shapeProp.x_pos, shapeProp.y_pos, Direction.DOWN))
+        {
+            updatePosition(Direction.DOWN);
+            lastMove = Time.time;
         }
     }
 
@@ -155,6 +155,10 @@ public class ShapeBehavior : MonoBehaviour
         {
             curPos.y -= 1; 
         }
+
+        //Store updated position in the shape properties 
+        shapeProp.x_pos = (int)curPos.x;
+        shapeProp.y_pos = (int)curPos.y; 
 
         //Update the position of the block by moving it the size of the block 
         transform.position = curPos;
