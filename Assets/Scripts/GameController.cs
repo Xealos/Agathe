@@ -4,15 +4,26 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
 
+    public GameObject ShapeContainer; /* Our shape container prefab */
+
+    private GameObject newShape; 
+
 	// Use this for initialization
 	void Start () {
-		//TODO: Figure out start screen 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
-        //Check to see if a shape is currently active 
+
+        //If we don't have a shape actively on the screen, we need 
+        //to create a enw one 
+        if (GameObject.Find("Shape Container") == null)
+        {
+            newShape = (GameObject)Instantiate(ShapeContainer);
+
+            //BRP TODO: Set the shape properties of the container
+            //TBA TODO: Come up with a way to randomly select a shape  
+        }
         
         //If a shape is not active  
             //Check for changes to the grid 
@@ -22,4 +33,5 @@ public class GameController : MonoBehaviour {
         //TODO: Check for Game Over 
 
 	}
+
 }

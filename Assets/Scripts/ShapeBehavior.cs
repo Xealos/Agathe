@@ -19,7 +19,6 @@ public class ShapeBehavior : MonoBehaviour
     public float MoveTime;
     public Vector2 StartPos; 
 
-    private GameObject grid;
     private GridBehavior gridBehavior;
     private ShapeProperties shapeProp;
     private float lastTimePressedX;
@@ -37,7 +36,7 @@ public class ShapeBehavior : MonoBehaviour
     // Use this for initialization
     void Start ()
     {
-        grid = GameObject.FindWithTag("grid");
+        GameObject grid = GameObject.FindWithTag("grid");
 
         //Get the grid components 
         if ( grid != null )
@@ -120,7 +119,8 @@ public class ShapeBehavior : MonoBehaviour
     {
         //instantiate 4 blocks in the correct positions on grid 
 
-        //destroy the shape object 
+        //Destroy the shape 
+        Destroy(gameObject);
     }
 
     private void setRotation()
