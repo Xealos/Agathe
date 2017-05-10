@@ -66,6 +66,10 @@ public class GridBehavior : MonoBehaviour {
                 xNext = x + 1;
                 yNext = y;
                 break;
+
+            default:
+            // No direction
+                return false;
         }
 
         //Verify requested cell position is within boundaries of game 
