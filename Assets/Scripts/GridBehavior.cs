@@ -45,24 +45,24 @@ public class GridBehavior : MonoBehaviour {
     }
 
     //Boundary check
-    public bool IsMoveLegal( int x, int y, ShapeBehavior.Direction direction )
+    public bool IsMoveLegal( int x, int y, ShapeBehavior.DirectionType direction )
     {
         int xNext = x, yNext = y;
 
         //Calculate requested cell position 
         switch(direction)
         {
-            case ShapeBehavior.Direction.DOWN:
+            case ShapeBehavior.DirectionType.DOWN:
                 xNext = x;
                 yNext = y - 1;
                 break;
 
-            case ShapeBehavior.Direction.LEFT:
+            case ShapeBehavior.DirectionType.LEFT:
                 xNext = x - 1;
                 yNext = y;
                 break;
 
-            case ShapeBehavior.Direction.RIGHT:
+            case ShapeBehavior.DirectionType.RIGHT:
                 xNext = x + 1;
                 yNext = y;
                 break;

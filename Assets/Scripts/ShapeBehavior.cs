@@ -2,14 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShapeProperties
-{
-    public int x_pos;
-    public int y_pos;
-    public int rotation;
-    public int type; 
-}
-
 public class ShapeBehavior : MonoBehaviour
 {
     //TODO: Consider moving all the timeout/move time funcationality to the 
@@ -17,21 +9,56 @@ public class ShapeBehavior : MonoBehaviour
     public float CooldownTimeX;
     public float CooldownTimeY;
     public float MoveTime;
-    public Vector2 StartPos; 
+    public Vector2 StartPos;
 
-    private GridBehavior gridBehavior;
-    private ShapeProperties shapeProp;
-    private float lastTimePressedX;
-    private float lastTimePressedY;
-    private float lastMove;
+    public GameObject Block;
+    public ShapeType Shape;
+    public ColorType Color;
+    public float rotation;
 
-    public enum Direction
+    public enum ShapeType
+    {
+        Shape_I,
+        Shape_J,
+        Shape_L,
+        Shape_O,
+        Shape_S,
+        Shape_T,
+        Shape_Z
+    };
+
+    public enum DirectionType
     {
         LEFT,
         RIGHT,
         DOWN,
         NONE
     };
+
+    public enum ColorType
+    {
+        BLUE,
+        GREEN,
+        RED,
+        YELLOW
+    };
+
+    /* position of each block for each shape */ 
+    private static readonly List<int[,]> posList = new List<int[,]>
+        {
+        new int[4, 2] { { 0, 0 }, { 1, 0 }, { 2, 0 }, { 3, 0 } },   /* I shape positions */ 
+        new int[4, 2] { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 1, 2 } },   /* J shape positions */ 
+        new int[4, 2] { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 0, 2 } },   /* L shape positions */ 
+        new int[4, 2] { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } },   /* O shape positions */ 
+        new int[4, 2] { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 2, 1 } },   /* S shape positions */ 
+        new int[4, 2] { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 2, 0 } },   /* T shape positions */ 
+        new int[4, 2] { { 0, 1 }, { 1, 0 }, { 2, 0 }, { 1, 1 } },   /* Z shape positions */ 
+        };
+
+    private GridBehavior gridBehavior;
+    private float lastTimePressedX;
+    private float lastTimePressedY;
+    private float lastMove;
 
     // Use this for initialization
     void Start ()
@@ -44,17 +71,6 @@ public class ShapeBehavior : MonoBehaviour
             gridBehavior = grid.GetComponent<GridBehavior>(); 
         }
 
-        shapeProp = new ShapeProperties(); 
-
-        //initialize the kind of shape we're going to be
-        shapeProp.type = 0;
-
-        //initialize the rotation 
-        shapeProp.rotation = 0;
-
-        //initialize the position 
-        shapeProp.x_pos = (int)StartPos.x;
-        shapeProp.y_pos = (int)StartPos.y; 
         transform.position = StartPos; 
 	}
 	
@@ -63,7 +79,7 @@ public class ShapeBehavior : MonoBehaviour
     {
         Vector2 playerInput;
         bool rotate;
-        Direction shapeDir = Direction.NONE;
+        DirectionType shapeDir = DirectionType.NONE;
 
         //Get key inputs
         playerInput.x = Input.GetAxis("Horizontal");
@@ -77,20 +93,20 @@ public class ShapeBehavior : MonoBehaviour
         //Assign a direction based on the input
         if (playerInput.x == 1)
         {
-            shapeDir = Direction.RIGHT; 
+            shapeDir = DirectionType.RIGHT; 
         }
         else if (playerInput.x == -1)
         {
-            shapeDir = Direction.LEFT; 
+            shapeDir = DirectionType.LEFT; 
         }
         else if (playerInput.y == -1)
         {
-            shapeDir = Direction.DOWN; 
+            shapeDir = DirectionType.DOWN; 
         }
 
         //BRP TODO: See if this logic can be simplified between the player input 
         //and requested direction 
-        if (gridBehavior.IsMoveLegal(shapeProp.x_pos, shapeProp.y_pos, shapeDir))
+        if (gridBehavior.IsMoveLegal((int)transform.position.x, (int)transform.position.y, shapeDir))
         {
             if (playerInput.x != 0
                 && Time.time > (lastTimePressedX + CooldownTimeX))
@@ -108,11 +124,19 @@ public class ShapeBehavior : MonoBehaviour
         }
 
         if (playerInput.y == 0 && Time.time > (lastMove + MoveTime)
-            && gridBehavior.IsMoveLegal(shapeProp.x_pos, shapeProp.y_pos, Direction.DOWN))
+            && gridBehavior.IsMoveLegal((int)transform.position.x, (int)transform.position.y, DirectionType.DOWN))
         {
-            updatePosition(Direction.DOWN);
+            updatePosition(DirectionType.DOWN);
             lastMove = Time.time;
         }
+    }
+
+    public void RenderShape(ShapeType Shape)
+    {
+        int[,] shape = posList[(int)Shape];
+
+        /* Instantiate the four blocks */
+
     }
 
     private void destroyShape()
@@ -132,7 +156,7 @@ public class ShapeBehavior : MonoBehaviour
         //Return FALSE if a collision occurs 
     }
 
-    private void updatePosition( Direction direction )
+    private void updatePosition( DirectionType direction )
     {
         Vector2 curPos; 
 
@@ -142,12 +166,12 @@ public class ShapeBehavior : MonoBehaviour
         //Clear the current position on the grid 
         gridBehavior.CellClear( (int)curPos.x, (int)curPos.y );
 
-        //Increment position based on the direction
-        if (direction == Direction.RIGHT)
+        //Increment position based on the DirectionType
+        if (direction  == DirectionType.RIGHT)
         {
             curPos.x += 1;
         }
-        else if (direction == Direction.LEFT )
+        else if (direction == DirectionType.LEFT )
         {
             curPos.x -= 1; 
         }
@@ -156,15 +180,12 @@ public class ShapeBehavior : MonoBehaviour
             curPos.y -= 1; 
         }
 
-        //Store updated position in the shape properties 
-        shapeProp.x_pos = (int)curPos.x;
-        shapeProp.y_pos = (int)curPos.y; 
-
         //Update the position of the block by moving it the size of the block 
         transform.position = curPos;
 
         //Let the grid know of the new position
         gridBehavior.CellSet( (int)curPos.x, (int)curPos.y );
+
     }
 
 }
