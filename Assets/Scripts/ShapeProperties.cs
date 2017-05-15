@@ -23,24 +23,9 @@ public class ShapeProperties : MonoBehaviour {
         YELLOW
     }
 
-    public GameObject Block; 
     public ShapeType Shape;
     public ColorType Color;
-    public float rotation;  
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
-    public void setShapePosition(ShapeType Shape)
-    {
-
-    }
+    public int Rotation;
+    public int[,] Coordinates;  
     
 }

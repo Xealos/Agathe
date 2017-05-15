@@ -5,6 +5,10 @@ using UnityEngine;
 public class ShapeContainer : MonoBehaviour {
 
     public GameObject block;
+    public bool doneMoving = false;
+    private ShapeProperties shapeProps; 
+
+    //TBA TODO: Put the list of coordinates for each shape here, make them private. 
 
 	// Use this for initialization
 	void Start () {
@@ -15,4 +19,17 @@ public class ShapeContainer : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    public void ShapePropsSet( ShapeProperties.ShapeType shape, ShapeProperties.ColorType color )
+    {
+        shapeProps.Shape = shape; 
+        shapeProps.Color = color; 
+    }
+
+    public int[,] ShapeCoordsGet()
+    {
+        //TBA TODO: Return the current coordinates of the shape
+        //temp value 
+        return new int[0, 0];
+    }
 }
